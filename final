@@ -1,0 +1,242 @@
+Here’s how you can create a basic Entity Framework Code-First console application that creates a Student database and adds one student.
+
+ 
+
+1. Set Up the Console Application
+
+ 
+
+First, create a new Console App project in Visual Studio or your preferred IDE.
+
+ 
+
+2. Install Entity Framework
+
+ 
+
+You need to install the Entity Framework package. You can do this through NuGet Package Manager or the Package Manager Console in Visual Studio.
+
+ 
+
+In the Package Manager Console, run the following command:
+
+ 
+
+Install-Package EntityFramework
+
+ 
+
+3. Create the Model (Student Class)
+
+ 
+
+Now, create a Student class that will represent the table in the database.
+
+ 
+
+public class Student
+
+{
+
+    public int StudentId { get; set; } // Primary Key
+
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
+
+    public string Email { get; set; }
+
+}
+
+ 
+
+4. Create the Database Context Class
+
+ 
+
+Now, create a SchoolContext class that will manage the connection to the database and hold the DbSet for the Student entity.
+
+ 
+
+using System.Data.Entity;
+
+ 
+
+public class SchoolContext : DbContext
+
+{
+
+    public DbSet<Student> Students { get; set; }
+
+ 
+
+    public SchoolContext() : base("name=SchoolDbConnection")
+
+    {
+
+    }
+
+}
+
+ 
+
+5. Set Up the Connection String
+
+ 
+
+In the App.config file, add a connection string that will point to your local database. The Entity Framework will use this string to connect to the database.
+
+ 
+
+<configuration>
+
+  <connectionStrings>
+
+    <add name="SchoolDbConnection" 
+
+         connectionString="Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=SchoolDb;Integrated Security=True"
+
+         providerName="System.Data.SqlClient" />
+
+  </connectionStrings>
+
+</configuration>
+
+ 
+
+6. Create the Database and Add a Student
+
+ 
+
+Next, you need to add code that will create the database if it doesn't exist and add one student to the Student table.
+
+ 
+
+using System;
+
+using System.Linq;
+
+ 
+
+namespace EFCodeFirstConsoleApp
+
+{
+
+    class Program
+
+    {
+
+        static void Main(string[] args)
+
+        {
+
+            using (var context = new SchoolContext())
+
+            {
+
+                // Create the database if it doesn't exist
+
+                context.Database.Initialize(force: false);
+
+ 
+
+                // Create a new student object
+
+                var newStudent = new Student
+
+                {
+
+                    FirstName = "John",
+
+                    LastName = "Doe",
+
+                    Email = "john.doe@example.com"
+
+                };
+
+ 
+
+                // Add the student to the database
+
+                context.Students.Add(newStudent);
+
+                context.SaveChanges();
+
+ 
+
+                Console.WriteLine("Student added to the database.");
+
+            }
+
+        }
+
+    }
+
+}
+
+ 
+
+7. Run the Application
+
+ 
+
+When you run the application, the following will happen:
+
+ 
+
+1. The SchoolContext will attempt to connect to the database using the connection string.
+
+ 
+
+ 
+
+2. If the SchoolDb database doesn’t already exist, it will be created.
+
+ 
+
+ 
+
+3. One student will be added to the Students table in the database.
+
+ 
+
+ 
+
+ 
+
+8. Check the Database
+
+ 
+
+After running the application, you can check the database using SQL Server Management Studio (SSMS) or another database management tool to ensure that the SchoolDb database was created and the student was added to the Students table.
+
+ 
+
+9. Upload to GitHub
+
+ 
+
+After completing the project, push the code to GitHub:
+
+ 
+
+1. Create a new repository on GitHub.
+
+ 
+
+ 
+
+2. Initialize a local Git repository (if not already done) by running the following commands:
+
+ 
+
+ 
+
+ 
+
+git init
+
+git add .
+
+git commit -m "Initial commit"
+
