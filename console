@@ -1,0 +1,88 @@
+Step 1: Set Up a New Console Application
+Open Visual Studio.
+Create a new Console App (.NET 6 or later) project.
+Install Entity Framework Core packages via NuGet:
+Open Package Manager Console (Tools > NuGet Package Manager > Package Manager Console) and run:
+mathematica
+Copy
+Edit
+Install-Package Microsoft.EntityFrameworkCore.SqlServer
+Install-Package Microsoft.EntityFrameworkCore.Tools
+Step 2: Define the Student Model
+Create a Student.cs file:
+
+csharp
+Copy
+Edit
+public class Student
+{
+    public int Id { get; set; }  // Primary Key
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public int Age { get; set; }
+}
+Step 3: Create the Database Context
+Create a SchoolContext.cs file:
+
+csharp
+Copy
+Edit
+using Microsoft.EntityFrameworkCore;
+
+public class SchoolContext : DbContext
+{
+    public DbSet<Student> Students { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=SchoolDB;Trusted_Connection=True;");
+    }
+}
+Note: Replace the Server value if you're using a different SQL Server setup.
+
+Step 4: Apply Migrations & Create the Database
+Run the following commands in the Package Manager Console:
+
+pgsql
+Copy
+Edit
+Add-Migration InitialCreate
+Update-Database
+This creates the database automatically based on the Student class.
+
+Step 5: Add a Student to the Database
+Modify Program.cs:
+
+csharp
+Copy
+Edit
+using System;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        using (var context = new SchoolContext())
+        {
+            // Create a new student
+            var student = new Student
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Age = 20
+            };
+
+            context.Students.Add(student);
+            context.SaveChanges();  // Save to the database
+
+            // Retrieve and display all students
+            var students = context.Students.ToList();
+            Console.WriteLine("Students in Database:");
+            foreach (var s in students)
+            {
+                Console.WriteLine($"ID: {s.Id}, Name: {s.FirstName} {s.LastName}, Age: {s.Age}");
+            }
+        }
+    }
+}
